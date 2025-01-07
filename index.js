@@ -121,6 +121,103 @@ function moveWasteToFoundation(foundationIndex) {
       }
   }
 }
+
+let draggedCard = null;
+let draggedFromPile = null;
+let draggedCardIndex = null;
+
+function onDragStart(e) {
+    draggedCard = e.target;
+    draggedFromPile = draggedCard.closest('.pile')?.id|| 'waste';
+    draggedCardIndex = parseInt(draggedCard.dataset.index, 10);
+    e.dataTransfer.setData('text/plain', '');
+}
+
+function onDragEnd() {
+    draggedCard = null;
+    draggedFromPile = null;
+    draggedCardIndex = null;
+}
+
+function onDrop(e) {
+  e.preventDefault();
+
+  const targetPileId = e.target.closest('.pile')?.id;
+  if (!targetPileId) return; // Invalid drop
+
+  const isTableau = targetPileId.startsWith('tableau');
+  const targetIndex = parseInt(targetPileId.split('-')[1], 10) - 1;
+  const targetPile = isTableau ? tableau[targetIndex] : foundation[targetIndex];
+
+  const card = getCardFromPile(draggedFromPile, draggedCardIndex);
+
+  if (draggedFromPile === 'waste') {
+      if (isTableau && isValidTableauMove(card, targetPile)) {
+          moveWasteToTableau(targetPile);  // This moves the card from waste to tableau
+      } else if (!isTableau && isValidFoundationMove(card, targetPile, suits[targetIndex])) {
+          moveWasteToFoundation(targetIndex);  // Move to foundation pile
+      }
+  } else if (isTableau && isValidTableauMove(card, targetPile)) {
+      moveToTableau(getPile(draggedFromPile), targetPile, draggedCardIndex);
+  } else if (!isTableau && isValidFoundationMove(card, targetPile, suits[targetIndex])) {
+      moveToFoundation(getPile(draggedFromPile), draggedCardIndex, targetIndex);
+  }
+
+  renderGame();  // Re-render game state after drop
+}
+
+function allowDrop(e) {
+    e.preventDefault();
+}
+
+function getPile(pileId) {
+  if (pileId.startsWith('tableau')) {
+      return tableau[parseInt(pileId.split('-')[1], 10) - 1];
+  } else if (pileId.startsWith('foundation')) {
+      return foundation[parseInt(pileId.split('-')[1], 10) - 1];
+  } else if (pileId === 'waste') {
+      return waste;
+  } else if (pileId === 'stock') {
+      return stock;
+  }
+  return null; // Invalid ID
+}
+
+
+function getCardFromPile(pileId, index) {
+    const pile = getPile(pileId);
+    return pile[index];
+}
+
+function onDrop(e) {
+  e.preventDefault();
+
+  const targetPileId = e.target.closest('.pile')?.id;
+  if (!targetPileId) return; // Invalid drop
+
+  const isTableau = targetPileId.startsWith('tableau');
+  const targetIndex = parseInt(targetPileId.split('-')[1], 10) - 1;
+  const targetPile = isTableau ? tableau[targetIndex] : foundation[targetIndex];
+
+  const card = getCardFromPile(draggedFromPile, draggedCardIndex);
+
+  if (draggedFromPile === 'waste') {
+    if (isTableau && isValidTableauMove(card, targetPile)) {
+        moveWasteToTableau(targetPile);  // This moves the card from waste to tableau
+    } else if (!isTableau && isValidFoundationMove(card, targetPile, suits[targetIndex])) {
+        moveWasteToFoundation(targetIndex);  // Move to foundation pile
+    }
+} else if (isTableau && isValidTableauMove(card, targetPile)) {
+    moveToTableau(getPile(draggedFromPile), targetPile, draggedCardIndex);
+    // Ensure the dropped card is face-up
+    targetPile[targetPile.length - 1].faceUp = true; 
+} else if (!isTableau && isValidFoundationMove(card, targetPile, suits[targetIndex])) {
+    moveToFoundation(getPile(draggedFromPile), draggedCardIndex, targetIndex);
+}
+
+  renderGame();
+}
+
 // Check if the game is won
 function checkWin() {
     return foundation.every(pile => pile.length === 13);
@@ -143,12 +240,16 @@ function renderGame() {
         const pileDiv = document.createElement('div');
         pileDiv.classList.add('pile');
         pileDiv.id = `tableau-${pileIndex + 1}`;
+        pileDiv.addEventListener('dragover', allowDrop);
+        pileDiv.addEventListener('drop', onDrop);
 
         pile.forEach((card, cardIndex) => {
             const cardDiv = document.createElement('div');
             cardDiv.classList.add('card');
             cardDiv.dataset.suit = card.suit;
             cardDiv.dataset.rank = card.rank;
+            cardDiv.dataset.pile = `tableau-${pileIndex + 1}`;
+            cardDiv.dataset.index = cardIndex;
 
             if (!card.faceUp) {
                 cardDiv.classList.add('face-down');
@@ -158,6 +259,10 @@ function renderGame() {
 
             cardDiv.style.top = `${cardIndex * 20}px`;
             pileDiv.appendChild(cardDiv);
+
+            cardDiv.setAttribute('draggable', 'true');
+            cardDiv.addEventListener('dragstart', onDragStart);
+            cardDiv.addEventListener('dragend', onDragEnd);
 
             cardDiv.addEventListener('click', () => {
                 tableau.forEach((toPile, toIndex) => {
@@ -181,6 +286,8 @@ function renderGame() {
         const pileDiv = document.createElement('div');
         pileDiv.classList.add('pile');
         pileDiv.id = `foundation-${pileIndex + 1}`;
+        pileDiv.addEventListener('dragover', allowDrop);
+        pileDiv.addEventListener('drop', onDrop);
 
         if (pile.length > 0) {
             const card = pile[pile.length - 1];
@@ -203,15 +310,20 @@ function renderGame() {
     });
 
     // Render Waste
-    waste.forEach((card) => {
+    waste.forEach((card, cardIndex) => {
         const cardDiv = document.createElement('div');
         cardDiv.classList.add('card');
         cardDiv.dataset.suit = card.suit;
         cardDiv.dataset.rank = card.rank;
+        cardDiv.dataset.pile = 'waste';
+        cardDiv.dataset.index = cardIndex;
         cardDiv.textContent = `${card.rank} ${card.suit}`;
         wasteDiv.appendChild(cardDiv);
 
         // Add event listener to waste cards
+        cardDiv.setAttribute('draggable', 'true');
+        cardDiv.addEventListener('dragstart', onDragStart);
+        cardDiv.addEventListener('dragend', onDragEnd);
         cardDiv.addEventListener('click', () => {
             tableau.forEach((toPile, toIndex) => {
                 if (isValidTableauMove(card, toPile)) {
