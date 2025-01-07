@@ -109,6 +109,7 @@ function isValidFoundationMove(card, foundationPile, suit) {
 }
 
 let moves = 0;
+let score = 0;
 
 // Update moves counter
 function updateMoves() {
@@ -129,6 +130,26 @@ function decrementMoves() {
     updateMoves();
   }
 }
+// Update score counter
+function updateScore() {
+  const scoreDiv = document.querySelector('.score');
+  scoreDiv.querySelector('span').textContent = score;
+}
+
+// Increment score counter
+function incrementScore(points) {
+  score += points;
+  updateScore();
+}
+
+// Decrement score counter
+function decrementScore(points) {
+  if (score >= points) {
+    score -= points;
+    updateScore();
+  }
+}
+
 // Move a card to a tableau pile
 function moveToTableau(fromPile, toPile, cardIndex) {
   const card = fromPile[cardIndex];
@@ -140,6 +161,7 @@ function moveToTableau(fromPile, toPile, cardIndex) {
     }
     renderGame();
     incrementMoves();
+    incrementScore(10); 
   }
 }
 
@@ -152,6 +174,7 @@ function moveWasteToTableau(toPile) {
       toPile.push(movedCard);
       renderGame();
       incrementMoves();
+      incrementScore(10); 
     }
   }
 }
@@ -168,6 +191,7 @@ function moveToFoundation(fromPile, cardIndex, foundationIndex) {
     }
     renderGame();
     incrementMoves();
+    incrementScore(50); 
   }
 }
 function moveWasteToFoundation(foundationIndex) {
@@ -178,6 +202,7 @@ function moveWasteToFoundation(foundationIndex) {
       foundation[foundationIndex].push(waste.pop());
       renderGame();
       incrementMoves();
+      incrementScore(50); 
     }
   }
 }
@@ -189,6 +214,7 @@ function drawCardFromStock() {
         waste.push(card);
         renderGame();
         incrementMoves();
+        decrementScore(5);
     } else {
         // Reset stock from waste when stock is empty
         stock = waste.reverse().map(card => ({ ...card, faceUp: false }));
