@@ -108,42 +108,51 @@ function isValidFoundationMove(card, foundationPile, suit) {
   return isOneMore;
 }
 
-// Draw cards from the stock to the waste
-function drawCardFromStock() {
-    if (stock.length > 0) {
-        const card = stock.pop();
-        waste.push(card);
-        renderGame();
-    } else {
-        // Reset stock from waste when stock is empty
-        stock = waste.reverse().map(card => ({ ...card, faceUp: false }));
-        waste = [];
-        renderGame();
-    }
+let moves = 0;
+
+// Update moves counter
+function updateMoves() {
+  const moveCountDiv = document.querySelector('.move-count');
+  moveCountDiv.querySelector('span').textContent = moves;
 }
 
+// Increment moves counter
+function incrementMoves() {
+  moves++;
+  updateMoves();
+}
+
+// Decrement moves counter
+function decrementMoves() {
+  if (moves > 0) {
+    moves--;
+    updateMoves();
+  }
+}
 // Move a card to a tableau pile
 function moveToTableau(fromPile, toPile, cardIndex) {
-    const card = fromPile[cardIndex];
-    if (isValidTableauMove(card, toPile)) {
-        const movingCards = fromPile.splice(cardIndex);
-        toPile.push(...movingCards);
-        if (fromPile.length > 0) {
-            fromPile[fromPile.length - 1].faceUp = true;
-        }
-        renderGame();
+  const card = fromPile[cardIndex];
+  if (isValidTableauMove(card, toPile)) {
+    const movingCards = fromPile.splice(cardIndex);
+    toPile.push(...movingCards);
+    if (fromPile.length > 0) {
+      fromPile[fromPile.length - 1].faceUp = true;
     }
+    renderGame();
+    incrementMoves();
+  }
 }
 
 function moveWasteToTableau(toPile) {
   if (waste.length > 0) {
-      const card = waste[waste.length - 1];
-      if (isValidTableauMove(card, toPile)) {
-        const movedCard = waste.pop();
-        movedCard.faceUp = true; // Ensure the card is face-up
-        toPile.push(movedCard);
-          renderGame();
-      }
+    const card = waste[waste.length - 1];
+    if (isValidTableauMove(card, toPile)) {
+      const movedCard = waste.pop();
+      movedCard.faceUp = true; // Ensure the card is face-up
+      toPile.push(movedCard);
+      renderGame();
+      incrementMoves();
+    }
   }
 }
 
@@ -152,25 +161,41 @@ function moveToFoundation(fromPile, cardIndex, foundationIndex) {
   const card = fromPile[cardIndex];
   const suit = suits[foundationIndex];
   if (isValidFoundationMove(card, foundation[foundationIndex], suit)) {
-      foundation[foundationIndex].push(card);
-      fromPile.splice(cardIndex, 1);
-      if (fromPile.length > 0 && tableau.includes(fromPile)) {
-          fromPile[fromPile.length - 1].faceUp = true;
-      }
-      renderGame();
+    foundation[foundationIndex].push(card);
+    fromPile.splice(cardIndex, 1);
+    if (fromPile.length > 0 && tableau.includes(fromPile)) {
+      fromPile[fromPile.length - 1].faceUp = true;
+    }
+    renderGame();
+    incrementMoves();
   }
 }
 function moveWasteToFoundation(foundationIndex) {
   if (waste.length > 0) {
-      const card = waste[waste.length - 1];
-      const suit = suits[foundationIndex];
-      if (isValidFoundationMove(card, foundation[foundationIndex], suit)) {
-          foundation[foundationIndex].push(waste.pop());
-          renderGame();
-      }
+    const card = waste[waste.length - 1];
+    const suit = suits[foundationIndex];
+    if (isValidFoundationMove(card, foundation[foundationIndex], suit)) {
+      foundation[foundationIndex].push(waste.pop());
+      renderGame();
+      incrementMoves();
+    }
   }
 }
 
+// Draw cards from the stock to the waste
+function drawCardFromStock() {
+    if (stock.length > 0) {
+        const card = stock.pop();
+        waste.push(card);
+        renderGame();
+        incrementMoves();
+    } else {
+        // Reset stock from waste when stock is empty
+        stock = waste.reverse().map(card => ({ ...card, faceUp: false }));
+        waste = [];
+        renderGame();
+    }
+}
 let draggedCard = null;
 let draggedFromPile = null;
 let draggedCardIndex = null;
@@ -393,3 +418,4 @@ function renderGame() {
 
 // Initial render
 renderGame();
+updateMoves(); 
