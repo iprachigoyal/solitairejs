@@ -365,6 +365,7 @@ function renderGame() {
             cardDiv.addEventListener('dragend', onDragEnd);
 
             cardDiv.addEventListener('click', () => {
+              if (!card.faceUp) return;
                 tableau.forEach((toPile, toIndex) => {
                     if (isValidTableauMove(card, toPile)) {
                         moveToTableau(pile, toPile, cardIndex);
