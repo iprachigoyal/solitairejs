@@ -31,6 +31,55 @@ function distributeCards(deck) {
 distributeCards(deck);
 
 // Helper to get the color of a card
+
+// Timer code
+let timerInterval;
+let seconds = 0;
+let isPlaying = false;
+
+const timerDisplay = document.querySelector('.timer span');
+const gameBoard = document.querySelector('.game-board');
+const playPauseButton = document.getElementById('play-pause');
+const playIcon = document.getElementById('play');
+const pauseIcon = document.getElementById('pause');
+
+function startTimer() {
+  if (!isPlaying) {
+      isPlaying = true;
+      playIcon.style.display = 'none';
+      pauseIcon.style.display = 'inline-block';
+      timerInterval = setInterval(() => {
+          seconds++;
+          const minutes = Math.floor(seconds / 60);
+          const secs = seconds % 60;
+          timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      }, 1000);
+  }
+}
+function pauseTimer() {
+  if (isPlaying) {
+      isPlaying = false;
+      playIcon.style.display = 'inline-block';
+      pauseIcon.style.display = 'none';
+      clearInterval(timerInterval);
+  }
+}
+playPauseButton.addEventListener('click', () => {
+  if (isPlaying) {
+      pauseTimer();
+  } else {
+      startTimer();
+  }
+});
+function addTimerStartListeners() {
+  const cards = document.querySelectorAll('.card');
+  cards.forEach(card => {
+      card.addEventListener('click', startTimer);
+      card.addEventListener('dragstart', startTimer);
+  });
+}
+
+
 function getColor(suit) {
     return ['hearts', 'diamonds'].includes(suit) ? 'red' : 'black';
 }
@@ -339,6 +388,7 @@ function renderGame() {
     });
 
     stockDiv.addEventListener('click', drawCardFromStock);
+    addTimerStartListeners();
 }
 
 // Initial render

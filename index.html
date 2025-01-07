@@ -4,11 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Solitaire</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="./style.css">
 </head>
 <body>
     <h1>Solitaire Game</h1>
     <div class="game-board">
+      <div id="score">
+        <div class="timer">
+           <button id="play-pause">
+              <i id="play" class="fas fa-play">▶</i>
+              <i id="pause" class="fas fa-pause">⏸</i>
+           </button>
+           <label>Timer:</label>
+           <span>00:00</span>
+        </div>
+        <div class="move-count" data-moves="0">
+           <label>Moves:</label>
+           <span>0</span>
+        </div>
+        <div class="score" data-score="0">
+           <label>Score:</label>
+           <span>0</span>
+        </div>
+     </div>
         <!-- Upper Row: Foundation, Stock, and Waste -->
         <div class="upper-row">
           <div class="stock-waste-piles">
