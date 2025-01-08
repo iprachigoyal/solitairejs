@@ -211,6 +211,7 @@ function moveWasteToFoundation(foundationIndex) {
 function drawCardFromStock() {
     if (stock.length > 0) {
         const card = stock.pop();
+        card.faceUp = true;
         waste.push(card);
         renderGame();
         incrementMoves();
