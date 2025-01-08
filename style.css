@@ -177,6 +177,8 @@ button:focus {
   background-color: white;
   border: 1px solid #ccc;
   border-radius: 8px;
+  background-size: cover; /* Ensure image covers the entire card */
+  background-position: center;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -186,8 +188,13 @@ button:focus {
   position: absolute;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-indent: -9999px; 
 }
-
+.card img {
+  width: 90%;
+  height: auto;
+  border-radius: 8px; /* Add slight rounding to the card image */
+}
 .card:hover {
   transform: scale(1.05);
   box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
@@ -211,6 +218,105 @@ button:focus {
   transform: scale(1.05);
   box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
 }
+.card::before,
+.card::after {
+  position: absolute;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.card::before {
+  top: 5px;
+  left: 5px;
+}
+
+.card::after {
+  bottom: 5px;
+  right: 5px;
+  transform: rotate(180deg);
+}
+
+/* Hearts and Diamonds (Red Cards) */
+.card[data-suit="hearts"]::before,
+.card[data-suit="hearts"]::after,
+.card[data-suit="diamonds"]::before,
+.card[data-suit="diamonds"]::after {
+  color: red;
+}
+
+/* Clubs and Spades (Black Cards) */
+.card[data-suit="clubs"]::before,
+.card[data-suit="clubs"]::after,
+.card[data-suit="spades"]::before,
+.card[data-suit="spades"]::after {
+  color: black;
+}
+
+/* Add Suit Symbols */
+.card[data-suit="hearts"]::before,
+.card[data-suit="hearts"]::after {
+  content: "♥";
+}
+
+.card[data-suit="diamonds"]::before,
+.card[data-suit="diamonds"]::after {
+  content: "♦";
+}
+
+.card[data-suit="clubs"]::before,
+.card[data-suit="clubs"]::after {
+  content: "♣";
+}
+
+.card[data-suit="spades"]::before,
+.card[data-suit="spades"]::after {
+  content: "♠";
+}
+
+/* Add Rank to Cards */
+.card::before {
+  content: attr(data-rank);
+}
+
+.card::after {
+  content: attr(data-rank);
+}
+.face {
+  width: 100%;
+  height: 100%;
+  background-size: cover; /* Ensures the image fits the container */
+  background-position: center; /* Centers the image */
+}
+
+/* Face-Down Cards */
+.card.face-down {
+  background-color: #007bff; /* Blue background for face-down cards */
+  color: transparent;
+  border: 2px solid #0056b3;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  height: 100%;
+  background-size: cover; /* Ensures the image fits the container */
+  background-position: center; 
+}
+
+.card.face-down::before,
+.card.face-down::after {
+  content: none; /* Hide rank and suit for face-down cards */
+}
+
+.card.face-down:hover {
+  transform: scale(1.05);
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Drag-and-Drop Styles */
+.card.dragging {
+  opacity: 0.7;
+  transform: scale(1.1);
+  box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.4);
+  z-index: 1000; /* Ensure the dragged card is on top */
+}
 /* Drag-and-Drop Styles */
 .card.dragging {
   opacity: 0.7;
@@ -230,6 +336,7 @@ button:focus {
   top: 0;
   left: 0;
 }
+
 
 #tableau .pile .card:not(:first-child) {
   margin-top: 20px; /* Overlap cards in tableau */

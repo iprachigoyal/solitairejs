@@ -322,7 +322,28 @@ function onDrop(e) {
 function checkWin() {
     return foundation.every(pile => pile.length === 13);
 }
+// Render Card Face
+function renderCardFace(card) {
+  const cardDiv = document.createElement('div');
+  cardDiv.classList.add('card');
+  cardDiv.dataset.suit = card.suit;
+  cardDiv.dataset.rank = card.rank;
 
+  if (card.faceUp) {
+    // Display the card face (image)
+    const imagePath = `img/${card.suit.toLowerCase()}-${card.rank.toLowerCase()}.svg`;
+    cardDiv.style.backgroundImage = `url(${imagePath})`;
+    cardDiv.style.backgroundSize = 'cover';
+    cardDiv.style.backgroundPosition = 'center';
+  } else {
+    // Display the back of the card (face-down)
+    // cardDiv.style.backgroundImage = 'url(C:\\Users\\hp\\Desktop\\soliatire\\solitairejs\\img\\clubs\\clubs-K.svg)';
+    cardDiv.style.backgroundSize = 'cover';
+    cardDiv.style.backgroundPosition = 'center';
+  }
+
+  return cardDiv;
+}
 // Render the game state
 function renderGame() {
   const tableauDiv = document.getElementById('tableau');
@@ -344,10 +365,7 @@ function renderGame() {
         pileDiv.addEventListener('drop', onDrop);
 
         pile.forEach((card, cardIndex) => {
-            const cardDiv = document.createElement('div');
-            cardDiv.classList.add('card');
-            cardDiv.dataset.suit = card.suit;
-            cardDiv.dataset.rank = card.rank;
+          const cardDiv = renderCardFace(card);
             cardDiv.dataset.pile = `tableau-${pileIndex + 1}`;
             cardDiv.dataset.index = cardIndex;
 
@@ -382,6 +400,7 @@ function renderGame() {
         tableauDiv.appendChild(pileDiv);
     });
 
+
     // Render Foundation
     foundation.forEach((pile, pileIndex) => {
         const pileDiv = document.createElement('div');
@@ -392,11 +411,7 @@ function renderGame() {
 
         if (pile.length > 0) {
             const card = pile[pile.length - 1];
-            const cardDiv = document.createElement('div');
-            cardDiv.classList.add('card');
-            cardDiv.dataset.suit = card.suit;
-            cardDiv.dataset.rank = card.rank;
-            cardDiv.textContent = `${card.rank} ${card.suit}`;
+            const cardDiv = renderCardFace(card);
             pileDiv.appendChild(cardDiv);
         }
 
@@ -412,10 +427,7 @@ function renderGame() {
 
     // Render Waste
     waste.forEach((card, cardIndex) => {
-        const cardDiv = document.createElement('div');
-        cardDiv.classList.add('card');
-        cardDiv.dataset.suit = card.suit;
-        cardDiv.dataset.rank = card.rank;
+      const cardDiv = renderCardFace(card);
         cardDiv.dataset.pile = 'waste';
         cardDiv.dataset.index = cardIndex;
         cardDiv.textContent = `${card.rank} ${card.suit}`;
