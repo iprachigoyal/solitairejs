@@ -387,7 +387,7 @@ function renderGame() {
             if (!card.faceUp) {
                 cardDiv.classList.add('face-down');
             } else {
-                cardDiv.textContent = `${card.rank} ${card.suit}`;
+                // cardDiv.textContent = `${card.rank} ${card.suit}`;
             }
 
             cardDiv.style.top = `${cardIndex * 20}px`;
@@ -445,7 +445,7 @@ function renderGame() {
       const cardDiv = renderCardFace(card);
         cardDiv.dataset.pile = 'waste';
         cardDiv.dataset.index = cardIndex;
-        cardDiv.textContent = `${card.rank} ${card.suit}`;
+        // cardDiv.textContent = `${card.rank} ${card.suit}`;
         wasteDiv.appendChild(cardDiv);
 
         // Add event listener to waste cards
