@@ -16,9 +16,9 @@ function preloadImages() {
     suits.forEach(suit => {
         ranks.forEach(rank => {
             const img = new Image();
-            const imagePath = `img/${suit}-${rank.toLowerCase()}.svg`;
+            const imagePath = `img/${suit}-${rank}.svg`;
             img.src = imagePath;
-            imageCache[`${suit}-${rank.toLowerCase()}`] = img;
+            imageCache[`${suit}-${rank}`] = img;
         });
     });
 }
