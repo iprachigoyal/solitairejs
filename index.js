@@ -52,12 +52,43 @@ distributeCards(deck);
 let timerInterval;
 let seconds = 0;
 let isPlaying = false;
+let lastState = null;
 
 const timerDisplay = document.querySelector('.timer span');
 const gameBoard = document.querySelector('.game-board');
 const playPauseButton = document.getElementById('play-pause');
 const playIcon = document.getElementById('play');
 const pauseIcon = document.getElementById('pause');
+
+
+function saveState() {
+    lastState = {
+        tableau: JSON.parse(JSON.stringify(tableau)),
+        foundation: JSON.parse(JSON.stringify(foundation)),
+        stock: JSON.parse(JSON.stringify(stock)),
+        waste: JSON.parse(JSON.stringify(waste)),
+        moves: moves,
+        score: score
+    };
+}
+function undoLastMove() {
+  if (!lastState) return;
+
+  // Restore game state
+  tableau.splice(0, tableau.length, ...lastState.tableau);
+  foundation.splice(0, foundation.length, ...lastState.foundation);
+  stock.splice(0, stock.length, ...lastState.stock);
+  waste.splice(0, waste.length, ...lastState.waste);
+  moves = lastState.moves;
+  score = lastState.score;
+
+  updateMoves();
+  updateScore();
+  renderGame();
+  lastState = null;
+}
+
+document.getElementById('undo-btn').addEventListener('click', undoLastMove);
 
 function startTimer() {
   if (!isPlaying) {
@@ -170,6 +201,7 @@ function decrementScore(points) {
 function moveToTableau(fromPile, toPile, cardIndex) {
   const card = fromPile[cardIndex];
   if (isValidTableauMove(card, toPile)) {
+    saveState();
     const movingCards = fromPile.splice(cardIndex);
     toPile.push(...movingCards);
     if (fromPile.length > 0) {
@@ -183,6 +215,7 @@ function moveToTableau(fromPile, toPile, cardIndex) {
 
 function moveWasteToTableau(toPile) {
   if (waste.length > 0) {
+    saveState();
     const card = waste[waste.length - 1];
     if (isValidTableauMove(card, toPile)) {
       const movedCard = waste.pop();
@@ -200,6 +233,7 @@ function moveToFoundation(fromPile, cardIndex, foundationIndex) {
   const card = fromPile[cardIndex];
   const suit = suits[foundationIndex];
   if (isValidFoundationMove(card, foundation[foundationIndex], suit)) {
+    saveState();
     foundation[foundationIndex].push(card);
     fromPile.splice(cardIndex, 1);
     if (fromPile.length > 0 && tableau.includes(fromPile)) {
@@ -212,6 +246,7 @@ function moveToFoundation(fromPile, cardIndex, foundationIndex) {
 }
 function moveWasteToFoundation(foundationIndex) {
   if (waste.length > 0) {
+    saveState();
     const card = waste[waste.length - 1];
     const suit = suits[foundationIndex];
     if (isValidFoundationMove(card, foundation[foundationIndex], suit)) {
@@ -226,6 +261,7 @@ function moveWasteToFoundation(foundationIndex) {
 // Draw cards from the stock to the waste
 function drawCardFromStock() {
     if (stock.length > 0) {
+        saveState();
         const card = stock.pop();
         card.faceUp = true;
         waste.push(card);
@@ -234,6 +270,7 @@ function drawCardFromStock() {
         decrementScore(5);
     } else {
         // Reset stock from waste when stock is empty
+        saveState();
         stock = waste.reverse().map(card => ({ ...card, faceUp: false }));
         waste = [];
         renderGame();

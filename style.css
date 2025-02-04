@@ -70,6 +70,14 @@ h1 {
   padding: 5px;
   transition: opacity 0.2s;
 }
+.btn{
+  background-color: white;
+  color: black;
+  padding: 10px 8px;
+  border: none;
+  border-radius: 6px;
+  font-size: medium;
+}
 
 #play-pause:hover {
   opacity: 0.8;
@@ -205,6 +213,12 @@ h1 {
   /* Make cards more compact */
   .card::before {
     font-size: 12px;
+  }
+  .btn{
+    padding: 4px 2px;
+    border: none;
+    border-radius: 2px;
+    font-size: small;
   }
 
   .card .value-suit {
