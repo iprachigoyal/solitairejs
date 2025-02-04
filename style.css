@@ -167,8 +167,7 @@ h1 {
 
 /* Card States */
 .card.face-down {
-  background: var(--primary-blue);
-  border: 2px solid var(--darker-blue);
+  background-image: url(img/card-back.svg);
   box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
