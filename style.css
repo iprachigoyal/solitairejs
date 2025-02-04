@@ -218,8 +218,7 @@ button:focus {
   transform: scale(1.05);
   box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
 }
-.card::before,
-.card::after {
+.card::before{
   position: absolute;
   font-size: 1.2rem;
   font-weight: bold;
@@ -230,11 +229,6 @@ button:focus {
   left: 5px;
 }
 
-.card::after {
-  bottom: 5px;
-  right: 5px;
-  transform: rotate(180deg);
-}
 
 /* Hearts and Diamonds (Red Cards) */
 .card[data-suit="hearts"]::before,
@@ -252,26 +246,6 @@ button:focus {
   color: black;
 }
 
-/* Add Suit Symbols */
-.card[data-suit="hearts"]::before,
-.card[data-suit="hearts"]::after {
-  content: "♥";
-}
-
-.card[data-suit="diamonds"]::before,
-.card[data-suit="diamonds"]::after {
-  content: "♦";
-}
-
-.card[data-suit="clubs"]::before,
-.card[data-suit="clubs"]::after {
-  content: "♣";
-}
-
-.card[data-suit="spades"]::before,
-.card[data-suit="spades"]::after {
-  content: "♠";
-}
 
 /* Add Rank to Cards */
 .card::before {

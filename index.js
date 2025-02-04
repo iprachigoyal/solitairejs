@@ -10,6 +10,22 @@ function shuffle(deck) {
 }
 
 shuffle(deck);
+const imageCache = {};
+
+function preloadImages() {
+    suits.forEach(suit => {
+        ranks.forEach(rank => {
+            const img = new Image();
+            const imagePath = `img/${suit}-${rank}.svg`;
+            img.src = imagePath;
+            imageCache[`${suit}-${rank}`] = img;
+        });
+    });
+}
+
+// Call this function when the game initializes
+preloadImages();
+
 
 const tableau = Array.from({ length: 7 }, () => []);
 const foundation = suits.map(suit => []);
@@ -331,20 +347,18 @@ function renderCardFace(card) {
   cardDiv.dataset.rank = card.rank;
 
   if (card.faceUp) {
-    // Display the card face (image)
-    const imagePath = `img/${card.suit.toLowerCase()}-${card.rank.toLowerCase()}.svg`;
-    cardDiv.style.backgroundImage = `url(${imagePath})`;
-    cardDiv.style.backgroundSize = 'cover';
-    cardDiv.style.backgroundPosition = 'center';
+      // Use preloaded image
+      const cachedImage = imageCache[`${card.suit}-${card.rank}`];
+      if (cachedImage) {
+          cardDiv.style.backgroundImage = `url(${cachedImage.src})`;
+      }
   } else {
-    // Display the back of the card (face-down)
-    // cardDiv.style.backgroundImage = 'url(C:\\Users\\hp\\Desktop\\soliatire\\solitairejs\\img\\clubs\\clubs-K.svg)';
-    cardDiv.style.backgroundSize = 'cover';
-    cardDiv.style.backgroundPosition = 'center';
+      cardDiv.style.backgroundImage = 'url("img/card-back.svg")'; // Use a cached back image if needed
   }
 
   return cardDiv;
 }
+
 // Render the game state
 function renderGame() {
   const tableauDiv = document.getElementById('tableau');
