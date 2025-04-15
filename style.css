@@ -18,7 +18,8 @@
 /* Base Styles */
 body {
   font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #2e7d32, #1b5e20);
+  background:  #1b5e20;
+  height: 100%;
   color: white;
   text-align: center;
   min-height: 100vh;
